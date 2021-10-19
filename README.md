@@ -11,3 +11,4 @@ Po skopiowaniu uruchamiamy scrypt hassfest poleceniem:
 python3 -m script.hassfest
 ```
 Lub uruchamiamy ponownie maszynę z HomeAssistant.
+Integracja będzie widoczna w zakładce ,,Integracje" wyszukujemy F&F Fox device, gotowe.
