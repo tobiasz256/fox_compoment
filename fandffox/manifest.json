@@ -1,0 +1,17 @@
+{
+  "domain": "fandffox",
+  "name": "F&F Fox devices",
+  "config_flow": true,
+  "documentation": "https://www.home-assistant.io/integrations/fandffox",
+  "requirements": [
+    "foxrestapiclient==0.1.10"
+  ],
+  "ssdp": [],
+  "zeroconf": [],
+  "homekit": {},
+  "dependencies": [],
+  "codeowners": [
+    "@fandf92"
+  ],
+  "iot_class": "local_polling"
+}

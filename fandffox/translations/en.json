@@ -1,0 +1,31 @@
+{
+    "config": {
+        "abort": {
+            "no_devices_found": "No devices found on the network",
+            "single_instance_allowed": "Already configured. Only a single configuration possible."
+        },
+        "error": {
+            "cannot_connect": "Failed to connect to F&F Fox device. Check RestAPI key and WiFi connection.",
+            "wrong_api_key": "Provided RestAPI key is invalid.",
+            "unknown": "Unexpected error."
+        },
+        "step": {
+            "confirm": {
+                "description": "Do you want to start set up?"
+            },
+            "discovering_summary": {
+                "description": "We found {devices_amount} F&F Fox devices. \n Go forward to configure them. Have RESTApi access keys ready - You can find it in Fox mobile application."
+            },
+            "configure_device": {
+                "description": "You are configuring F&F Fox device identified by following id: {device_id} and IP address: {device_host}. \n\r Fill the name of the device or leave empty to get it from F&F Fox device. \n\r If you configured F&F Fox device with no auth key, 000 key will be used as default.",
+                "data": {
+                    "device_name": "Device name displayed in HomeAssistant.",
+                    "rest_api_key": "RestAPI key to authorize communication."
+                }
+            }
+        },
+        "progress": {
+            "task": "We are discovering F&F Fox devices in your local network."
+        }
+    }
+}

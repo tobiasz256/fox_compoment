@@ -1,0 +1,160 @@
+"""Support for F&F Fox sensors."""
+from __future__ import annotations
+
+from datetime import timedelta
+import logging
+
+from homeassistant.components.fandffox import FoxDevicesCoordinator
+from homeassistant.components.fandffox.const import DOMAIN, POOLING_INTERVAL
+from homeassistant.components.sensor import (
+    DEVICE_CLASS_CURRENT,
+    DEVICE_CLASS_POWER,
+    DEVICE_CLASS_VOLTAGE,
+    SensorEntity,
+    SensorEntityDescription,
+)
+from homeassistant.const import (
+    ELECTRIC_CURRENT_AMPERE,
+    ELECTRIC_POTENTIAL_VOLT,
+    FREQUENCY_HERTZ,
+    POWER_KILO_WATT,
+    POWER_WATT,
+)
+from homeassistant.helpers.typing import StateType
+from homeassistant.helpers.update_coordinator import (
+    CoordinatorEntity,
+    DataUpdateCoordinator,
+)
+
+_LOGGER = logging.getLogger(__name__)
+
+FOX_SENSORS: tuple[SensorEntityDescription, ...] = (
+    SensorEntityDescription(
+        key="voltage",
+        name="Voltage",
+        device_class=DEVICE_CLASS_VOLTAGE,
+        native_unit_of_measurement=ELECTRIC_POTENTIAL_VOLT,
+    ),
+    SensorEntityDescription(
+        key="current",
+        name="Current",
+        device_class=DEVICE_CLASS_CURRENT,
+        native_unit_of_measurement=ELECTRIC_CURRENT_AMPERE,
+    ),
+    SensorEntityDescription(
+        key="power_active",
+        name="Active power",
+        device_class=DEVICE_CLASS_POWER,
+        native_unit_of_measurement=POWER_WATT,
+    ),
+    SensorEntityDescription(
+        key="power_reactive",
+        name="Reactive power",
+        device_class=DEVICE_CLASS_POWER,
+        native_unit_of_measurement=POWER_WATT,
+    ),
+    SensorEntityDescription(
+        key="frequency",
+        name="AC Frequency",
+        device_class=None,
+        native_unit_of_measurement=FREQUENCY_HERTZ,
+    ),
+    SensorEntityDescription(
+        key="power_factor",
+        name="Power factor",
+        device_class=None,
+        native_unit_of_measurement=FREQUENCY_HERTZ,
+    ),
+    SensorEntityDescription(
+        key="active_energy",
+        name="Active energy",
+        device_class=DEVICE_CLASS_POWER,
+        native_unit_of_measurement=POWER_KILO_WATT,
+    ),
+    SensorEntityDescription(
+        key="reactive_energy",
+        name="Reactive energy",
+        device_class=DEVICE_CLASS_POWER,
+        native_unit_of_measurement=POWER_KILO_WATT,
+    ),
+    SensorEntityDescription(
+        key="active_energy_import",
+        name="Active energy import",
+        device_class=DEVICE_CLASS_POWER,
+        native_unit_of_measurement=POWER_KILO_WATT,
+    ),
+    SensorEntityDescription(
+        key="reactive_energy_import",
+        name="Reactive energy import",
+        device_class=DEVICE_CLASS_POWER,
+        native_unit_of_measurement=POWER_KILO_WATT,
+    ),
+)
+
+
+async def async_setup_entry(hass, config_entry, async_add_entities):
+    """Set up F&F Fox Sensor from Config Entry."""
+
+    entities = []
+    device_coordinator: FoxDevicesCoordinator = hass.data[DOMAIN][config_entry.entry_id]
+
+    async def async_update_data():
+        """Fetch data from API endpoint.
+
+        This is the place to pre-process the data to lookup tables
+        so entities can quickly look up their data.
+        """
+        return device_coordinator.get_sensor_devices()
+
+    coordinator = DataUpdateCoordinator(
+        hass,
+        _LOGGER,
+        # Name of the data. For logging purposes.
+        name="sensor",
+        update_method=async_update_data,
+        # Polling interval. Will only be polled if there are subscribers.
+        update_interval=timedelta(seconds=POOLING_INTERVAL),
+    )
+
+    await coordinator.async_config_entry_first_refresh()
+    for idx, ent in enumerate(coordinator.data):
+        # if isinstance(ent, FoxR1S1Device):
+        entities = [
+            FoxGenericSensor(coordinator, idx, description)
+            for description in FOX_SENSORS
+        ]
+    async_add_entities(entities)
+    return True
+
+
+class FoxGenericSensor(CoordinatorEntity, SensorEntity):
+    """Fox generic sensor implementation."""
+
+    def __init__(self, coordinator, idx: int, description: SensorEntityDescription):
+        """Initialize object."""
+        super().__init__(coordinator)
+        self._idx = idx
+        self.entity_description = description
+
+    @property
+    def name(self):
+        """Return the name of the device."""
+        return f"{self.coordinator.data[self._idx].name}-sensor-{self.entity_description.key}"
+
+    @property
+    def unique_id(self) -> str:
+        """Return a unique ID."""
+        device = self.coordinator.data[self._idx]
+        return f"{device.mac_addr}-sensor-{self.entity_description.key}"
+
+    @property
+    def device_info(self):
+        """Return device info."""
+        return self.coordinator.data[self._idx].get_device_info()
+
+    @property
+    def native_value(self) -> StateType:
+        """Return the value reported by the sensor."""
+        return self.coordinator.data[self._idx].fetch_sensor_value_by_key(
+            self.entity_description.key
+        )
