@@ -28,7 +28,7 @@ from foxrestapiclient.devices.fox_r2s2_device import FoxR2S2Device
 from foxrestapiclient.devices.fox_rgbw_device import FoxRGBWDevice
 from foxrestapiclient.devices.fox_str1s2_device import FoxSTR1S2Device
 
-from homeassistant.components.fandffox.const import DOMAIN
+from .const import DOMAIN
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 from homeassistant.util import Throttle

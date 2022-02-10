@@ -6,8 +6,8 @@ from foxrestapiclient.devices.fox_dim1s2_device import FoxDIM1S2Device
 from foxrestapiclient.devices.fox_led2s2_device import FoxLED2S2Device
 from foxrestapiclient.devices.fox_rgbw_device import FoxRGBWDevice
 
-from homeassistant.components.fandffox import FoxDevicesCoordinator
-from homeassistant.components.fandffox.const import DOMAIN, POOLING_INTERVAL
+from . import FoxDevicesCoordinator
+from .const import DOMAIN, POOLING_INTERVAL
 from homeassistant.components.light import (
     ATTR_BRIGHTNESS,
     ATTR_HS_COLOR,

@@ -4,8 +4,8 @@ from __future__ import annotations
 from datetime import timedelta
 import logging
 
-from homeassistant.components.fandffox import FoxDevicesCoordinator
-from homeassistant.components.fandffox.const import DOMAIN, POOLING_INTERVAL
+from . import FoxDevicesCoordinator
+from .const import DOMAIN, POOLING_INTERVAL
 from homeassistant.components.sensor import (
     DEVICE_CLASS_CURRENT,
     DEVICE_CLASS_POWER,

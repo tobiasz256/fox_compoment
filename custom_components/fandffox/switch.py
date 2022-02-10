@@ -5,8 +5,8 @@ import logging
 from foxrestapiclient.devices.fox_r1s1_device import FoxR1S1Device
 from foxrestapiclient.devices.fox_r2s2_device import FoxR2S2Device
 
-from homeassistant.components.fandffox import FoxDevicesCoordinator
-from homeassistant.components.fandffox.const import DOMAIN, POOLING_INTERVAL
+from . import FoxDevicesCoordinator
+from .const import DOMAIN, POOLING_INTERVAL
 from homeassistant.components.switch import SwitchEntity
 from homeassistant.helpers.update_coordinator import (
     CoordinatorEntity,

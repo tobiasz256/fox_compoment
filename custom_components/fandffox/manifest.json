@@ -6,6 +6,7 @@
   "requirements": [
     "foxrestapiclient==0.1.10"
   ],
+  "version": "1.0.0",
   "ssdp": [],
   "zeroconf": [],
   "homekit": {},

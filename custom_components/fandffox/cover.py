@@ -10,8 +10,8 @@ from homeassistant.components.cover import (
     SUPPORT_OPEN,
     CoverEntity,
 )
-from homeassistant.components.fandffox import FoxDevicesCoordinator
-from homeassistant.components.fandffox.const import DOMAIN, POOLING_INTERVAL
+from . import FoxDevicesCoordinator
+from .const import DOMAIN, POOLING_INTERVAL
 from homeassistant.helpers.update_coordinator import (
     CoordinatorEntity,
     DataUpdateCoordinator,
