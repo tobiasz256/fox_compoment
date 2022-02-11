@@ -4,7 +4,7 @@
   "config_flow": true,
   "documentation": "https://www.home-assistant.io/integrations/fandffox",
   "requirements": [
-    "foxrestapiclient==0.1.10"
+    "foxrestapiclient==0.1.11"
   ],
   "version": "1.0.0",
   "ssdp": [],
