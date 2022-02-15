@@ -1,31 +1,32 @@
 {
-    "config": {
-        "abort": {
-            "no_devices_found": "Nie znaleziono urządzeń F&F Fox w sieci lokalnej.",
-            "single_instance_allowed": "Urządzenie zostało już skonfigurowane. "
-        },
-        "error": {
-            "cannot_connect": "Nie udało się połączyć z urządzniem F&F Fox. Sprawdź klucz RestAPI oraz połączenie z siecią WiFi.",
-            "wrong_api_key": "Wprowadzony klucz RestAPI jest nieprawidłowy.",
-            "unknown": "Nieznany błąd."
-        },
-        "step": {
-            "confirm": {
-                "description": "Czy chcesz rozpocząć konfigurację?"
-            },
-            "discovering_summary": {
-                "description": "Znaleźliśmy następującą ilość urządzeń F&F Fox: {devices_amount}\nPrzejdź dalej aby skonfigurować swoje urządzenia. Przygotuj klucz RestAPI. Znajdziesz go w aplikacji F&F Fox."
-            },
-            "configure_device": {
-                "description": "Konfigurujesz urządzenie F&F Fox o identyfikatorze: {device_id} i adresie IP: {device_host}.\nWprowadź nazwę urządzenia lub pozostaw pustą aby pobrać domyślną nazwę z urządzenia.\nJeśli ustawiłeś urządzenie F&F Fox w tryb: klucz API niewymagany, klucz 000 zostanie użyty jako domyślny.",
-                "data": {
-                    "device_name": "Nazwa urządzenia widoczna w HomeAssistant",
-                    "rest_api_key": "Klucz RestAPI do autoryzacji połączenia."
-                }
-            }
-        },
-        "progress": {
-            "task": "Wyszukujemy urządzenia F&F Fox w sieci lokalnej."
-        }
-    }
+  "config": {
+      "abort": {
+          "no_devices_found": "Nie znaleziono urządzeń F&F Fox w sieci lokalnej.",
+          "single_instance_allowed": "Urządzenie zostało już skonfigurowane. "
+      },
+      "error": {
+          "cannot_connect": "Nie udało się połączyć z urządzniem F&F Fox. Sprawdź klucz RestAPI oraz połączenie z siecią WiFi.",
+          "wrong_api_key": "Wprowadzony klucz RestAPI jest nieprawidłowy.",
+          "unknown": "Nieznany błąd."
+      },
+      "step": {
+          "confirm": {
+              "description": "Czy chcesz rozpocząć konfigurację?"
+          },
+          "discovering_summary": {
+              "description": "Znaleźliśmy następującą ilość urządzeń F&F Fox: {devices_amount}\nPrzejdź dalej aby skonfigurować swoje urządzenia. Przygotuj klucz RestAPI. Znajdziesz go w aplikacji F&F Fox."
+          },
+          "configure_device": {
+              "description": "Konfigurujesz urządzenie F&F Fox: {device_type} o identyfikatorze: {device_id} i adresie IP: {device_host}.\nWprowadź nazwę urządzenia lub pozostaw pustą aby pobrać domyślną nazwę z urządzenia.\nJeśli ustawiłeś urządzenie F&F Fox w tryb: klucz API niewymagany, klucz 000 zostanie użyty jako domyślny.",
+              "data": {
+                  "device_name": "Nazwa urządzenia widoczna w HomeAssistant",
+                  "rest_api_key": "Klucz RestAPI do autoryzacji połączenia.",
+                  "skip_config": "Pomiń konfigurację dla tego urządzenia."
+              }
+          }
+      },
+      "progress": {
+          "task": "Wyszukujemy urządzenia F&F Fox w sieci lokalnej."
+      }
+  }
 }

@@ -75,6 +75,9 @@ class FoxDevicesCoordinator:
 
     def add_device_by_config(self, device_data: DeviceData):
         """Add device to map with proper platform."""
+        #Should skip config
+        if device_data.skip is True:
+            return
         try:
             if DEVICES[device_data.dev_type] == DEVICE_MODEL_LED2S2:
                 self.__devices_map[DEVICE_PLATFORM[device_data.dev_type]].append(

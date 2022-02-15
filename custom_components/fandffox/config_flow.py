@@ -4,6 +4,7 @@ from __future__ import annotations
 import logging
 from typing import Any
 
+from foxrestapiclient.devices.const import DEVICES
 from foxrestapiclient.devices.fox_base_device import DeviceData, FoxBaseDevice
 from foxrestapiclient.devices.fox_service_discovery import FoxServiceDiscovery
 import voluptuous as vol
@@ -11,7 +12,7 @@ import voluptuous as vol
 from homeassistant import config_entries
 from homeassistant.core import HomeAssistant
 
-from .const import DOMAIN, SCHEMA_INPUT_DEVICE_API_KEY, SCHEMA_INPUT_DEVICE_NAME_KEY
+from .const import DOMAIN, SCHEMA_INPUT_DEVICE_API_KEY, SCHEMA_INPUT_DEVICE_NAME_KEY, SCHEMA_INPUT_SKIP_CONFIG
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -19,9 +20,9 @@ device_input_schema = vol.Schema(
     {
         vol.Optional(SCHEMA_INPUT_DEVICE_NAME_KEY): str,
         vol.Required(SCHEMA_INPUT_DEVICE_API_KEY, default="000"): str,
+        vol.Optional(SCHEMA_INPUT_SKIP_CONFIG, default=False): bool,
     }
 )
-
 
 async def validate_input(
     hass: HomeAssistant, device_data: DeviceData
@@ -35,7 +36,7 @@ async def validate_input(
     fetched_data = await FoxBaseDevice(device_data).async_fetch_device_info()
     if fetched_data is False:
         errors[SCHEMA_INPUT_DEVICE_API_KEY] = "wrong_api_key"
-    return {}  # errors
+    return errors # errors
 
 
 async def serialize_dicovered_devices(
@@ -71,6 +72,9 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
 
     async def async_step_user(self, user_input: dict[str, Any] | None = None):
         """Handle the initial step."""
+        # Check it is already configured
+        if self._async_current_entries():
+            return self.async_abort(reason="single_instance_allowed")
         # Do discover task
         self.hass.async_create_task(self._async_do_discover_task())
         return self.async_show_progress(
@@ -105,6 +109,7 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 description_placeholders={
                     "device_id": devices[0].mac_addr,
                     "device_host": devices[0].host,
+                    "device_type": DEVICES[devices[0].dev_type]
                 },
             )
         self.hass.data.update({"summary_displayed": True})
@@ -119,6 +124,7 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     ):
         """Handle configure device step."""
         errors = {}
+        skip = False
         if user_input is not None:
             current_device: DeviceData = (
                 self.fox_service_discovery.get_discovered_devices()[
@@ -128,6 +134,7 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             try:
                 current_device.name = user_input[SCHEMA_INPUT_DEVICE_NAME_KEY]
                 current_device.api_key = user_input[SCHEMA_INPUT_DEVICE_API_KEY]
+                current_device.skip = user_input[SCHEMA_INPUT_SKIP_CONFIG]
             except KeyError:
                 _LOGGER.info("Device name was not set. Default will be used.")
             errors = await validate_input(self.hass, current_device)
@@ -160,6 +167,7 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             description_placeholders={
                 "device_id": next_device.mac_addr,
                 "device_host": next_device.host,
+                "device_type": DEVICES[next_device.dev_type]
             },
             errors=errors,
         )
