@@ -43,6 +43,8 @@ PLATFORMS = ["cover", "light", "switch", "sensor"]
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Set up F&F Fox devices from a config entry."""
     hass.data.setdefault(DOMAIN, {})
+    #Set update callback
+    entry.async_on_unload(entry.add_update_listener(update_listener))
     fox_devices_coordinator = FoxDevicesCoordinator()
     hass.data[DOMAIN][entry.entry_id] = fox_devices_coordinator
     for device_config in entry.data["discovered_devices"]:
@@ -59,6 +61,9 @@ async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 
     return unload_ok
 
+async def update_listener(hass, entry):
+    """Handle options update."""
+    await hass.config_entries.async_reload(entry.entry_id)
 
 class FoxDevicesCoordinator:
     """Fox devices coordinator."""

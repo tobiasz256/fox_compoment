@@ -6,7 +6,7 @@ from foxrestapiclient.devices.fox_r1s1_device import FoxR1S1Device
 from foxrestapiclient.devices.fox_r2s2_device import FoxR2S2Device
 
 from . import FoxDevicesCoordinator
-from .const import DOMAIN, POOLING_INTERVAL
+from .const import DOMAIN, POOLING_INTERVAL, SCHEMA_INPUT_UPDATE_POOLING
 from homeassistant.components.switch import SwitchEntity
 from homeassistant.helpers.update_coordinator import (
     CoordinatorEntity,
@@ -40,7 +40,9 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
         name="switch",
         update_method=async_update_data,
         # Polling interval. Will only be polled if there are subscribers.
-        update_interval=timedelta(seconds=POOLING_INTERVAL),
+        update_interval=timedelta(seconds=(
+            POOLING_INTERVAL if SCHEMA_INPUT_UPDATE_POOLING not in config_entry.options
+            else config_entry.options.get(SCHEMA_INPUT_UPDATE_POOLING))),
     )
 
     await coordinator.async_config_entry_first_refresh()

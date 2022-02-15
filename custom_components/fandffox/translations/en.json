@@ -28,5 +28,20 @@
       "progress": {
           "task": "We are discovering F&F Fox devices in your local network."
       }
+  },
+  "options": {
+      "error": {
+          "invalid_value": "Invalid value provided.",
+          "invalid_zero": "Value must be grather than zero!"
+      },
+      "step": {
+          "user": {
+              "data": {
+                  "polling": "Set pooling interval in seconds. (How often HA should refresh device state)."
+              },
+              "description": "Configure F&F Fox device integration",
+              "title": "F&F Fox options"
+          }
+      }
   }
 }

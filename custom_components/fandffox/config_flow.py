@@ -10,9 +10,16 @@ from foxrestapiclient.devices.fox_service_discovery import FoxServiceDiscovery
 import voluptuous as vol
 
 from homeassistant import config_entries
-from homeassistant.core import HomeAssistant
+from homeassistant.core import HomeAssistant, callback
 
-from .const import DOMAIN, SCHEMA_INPUT_DEVICE_API_KEY, SCHEMA_INPUT_DEVICE_NAME_KEY, SCHEMA_INPUT_SKIP_CONFIG
+from .const import (
+    DOMAIN,
+    POOLING_INTERVAL,
+    SCHEMA_INPUT_DEVICE_API_KEY,
+    SCHEMA_INPUT_DEVICE_NAME_KEY,
+    SCHEMA_INPUT_UPDATE_POOLING,
+    SCHEMA_INPUT_SKIP_CONFIG,
+)
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -23,6 +30,19 @@ device_input_schema = vol.Schema(
         vol.Optional(SCHEMA_INPUT_SKIP_CONFIG, default=False): bool,
     }
 )
+
+async def validate_input_pooling(
+    hass: HomeAssistant, value: str
+) -> dict[str, Any]:
+    """Validate the user input allows us to set pooling."""
+    errors = {}
+    try:
+        v = float(value)
+        if v == 0:
+            errors[SCHEMA_INPUT_UPDATE_POOLING] = "invalid_zero"
+    except ValueError:
+        errors[SCHEMA_INPUT_UPDATE_POOLING] = "invalid_value"
+    return errors # errors
 
 async def validate_input(
     hass: HomeAssistant, device_data: DeviceData
@@ -49,12 +69,52 @@ async def serialize_dicovered_devices(
     return serialized
 
 
+class OptionsFlowHandler(config_entries.OptionsFlow):
+    def __init__(self, config_entry):
+        """Initialize options flow."""
+        self.config_entry = config_entry
+
+    async def async_step_init(
+        self, user_input: dict[str, Any] | None = None
+    ):
+        """Manage the options."""
+        return await self.async_step_user()
+
+    async def async_step_user(
+        self, user_input: dict[str, Any] | None = None
+    ):
+        """Manage the options."""
+        #Set empty erros
+        errors = {}
+        if user_input is not None:
+            errors = await validate_input_pooling(self.hass, user_input[SCHEMA_INPUT_UPDATE_POOLING])
+            if errors == {}:
+                user_input[SCHEMA_INPUT_UPDATE_POOLING] = float(user_input[SCHEMA_INPUT_UPDATE_POOLING])
+                return self.async_create_entry(title="F&F Fox", data=user_input)
+
+        return self.async_show_form(
+            step_id="user",
+            data_schema=vol.Schema(
+                {
+                    vol.Required(SCHEMA_INPUT_UPDATE_POOLING,
+                        default=("" if SCHEMA_INPUT_UPDATE_POOLING not in self.config_entry.options
+                        else str(self.config_entry.options.get(SCHEMA_INPUT_UPDATE_POOLING)))): str,
+                }
+            ),
+            errors=errors,
+        )
+
 class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     """Configuration flow."""
 
-    VERSION = 1
+    VERSION = 2
     # Fox service discovery object
     fox_service_discovery = FoxServiceDiscovery()
+
+    @staticmethod
+    @callback
+    def async_get_options_flow(config_entry):
+        return OptionsFlowHandler(config_entry)
 
     async def _async_do_discover_task(self):
         """Do service discovery task."""

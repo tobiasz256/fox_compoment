@@ -28,5 +28,20 @@
       "progress": {
           "task": "Wyszukujemy urządzenia F&F Fox w sieci lokalnej."
       }
+  },
+  "options": {
+      "error": {
+          "invalid_value": "Wprowdzono niepoprawną wartość.",
+          "invalid_zero": "Wartość musi być większa od zera!"
+      },
+      "step": {
+          "user": {
+              "data": {
+                  "pooling": "Ustaw czas (w sekundach) odświeżania stanu urządzenia."
+              },
+              "description": "Konfiguruj integrację F&F Fox device",
+              "title": "F&F Fox opcje"
+          }
+      }
   }
 }

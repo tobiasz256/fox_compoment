@@ -7,7 +7,7 @@ from foxrestapiclient.devices.fox_led2s2_device import FoxLED2S2Device
 from foxrestapiclient.devices.fox_rgbw_device import FoxRGBWDevice
 
 from . import FoxDevicesCoordinator
-from .const import DOMAIN, POOLING_INTERVAL
+from .const import DOMAIN, POOLING_INTERVAL, SCHEMA_INPUT_UPDATE_POOLING
 from homeassistant.components.light import (
     ATTR_BRIGHTNESS,
     ATTR_HS_COLOR,
@@ -49,7 +49,9 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
         name="light",
         update_method=async_update_data,
         # Polling interval. Will only be polled if there are subscribers.
-        update_interval=timedelta(seconds=POOLING_INTERVAL),
+        update_interval=timedelta(seconds=(
+            POOLING_INTERVAL if SCHEMA_INPUT_UPDATE_POOLING not in config_entry.options
+            else config_entry.options.get(SCHEMA_INPUT_UPDATE_POOLING))),
     )
 
     await coordinator.async_config_entry_first_refresh()
