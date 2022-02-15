@@ -1,6 +1,6 @@
 {
   "name": "F&F Fox devices integration",
   "country": ["PL"],
-  "render_readme": false,
+  "render_readme": true,
   "domains": ["light","sensor","swtich"]
 }
