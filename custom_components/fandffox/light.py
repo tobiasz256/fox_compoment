@@ -60,9 +60,9 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
             for channel in ent.channels:
                 entities.append(FoxLED2S2Light(coordinator, idx, channel))
         elif isinstance(ent, FoxDIM1S2Device):
-            entities.append(FoxDIM1S2Light(coordinator, idx))
+            entities.append(FoxDIM1S2Light(coordinator, idx, 1))
         elif isinstance(ent, FoxRGBWDevice):
-            entities.append(FoxRGBWLight(coordinator, idx))
+            entities.append(FoxRGBWLight(coordinator, idx, 1))
 
     async_add_entities(entities)
     return True
