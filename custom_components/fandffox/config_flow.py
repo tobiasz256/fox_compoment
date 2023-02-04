@@ -184,7 +184,6 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     ):
         """Handle configure device step."""
         errors = {}
-        skip = False
         if user_input is not None:
             current_device: DeviceData = (
                 self.fox_service_discovery.get_discovered_devices()[
@@ -192,9 +191,9 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 ]
             )
             try:
-                current_device.name = user_input[SCHEMA_INPUT_DEVICE_NAME_KEY]
-                current_device.api_key = user_input[SCHEMA_INPUT_DEVICE_API_KEY]
                 current_device.skip = user_input[SCHEMA_INPUT_SKIP_CONFIG]
+                current_device.api_key = user_input[SCHEMA_INPUT_DEVICE_API_KEY]
+                current_device.name = user_input[SCHEMA_INPUT_DEVICE_NAME_KEY]
             except KeyError:
                 _LOGGER.info("Device name was not set. Default will be used.")
             errors = await validate_input(self.hass, current_device)

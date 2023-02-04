@@ -51,7 +51,7 @@ FOX_SENSORS: tuple[SensorEntityDescription, ...] = (
         key="power_reactive",
         name="Reactive power",
         device_class=DEVICE_CLASS_POWER,
-        native_unit_of_measurement=POWER_WATT,
+        native_unit_of_measurement="var",
     ),
     SensorEntityDescription(
         key="frequency",
@@ -62,32 +62,31 @@ FOX_SENSORS: tuple[SensorEntityDescription, ...] = (
     SensorEntityDescription(
         key="power_factor",
         name="Power factor",
-        device_class=None,
-        native_unit_of_measurement=FREQUENCY_HERTZ,
+        device_class=None
     ),
     SensorEntityDescription(
         key="active_energy",
         name="Active energy",
         device_class=DEVICE_CLASS_POWER,
-        native_unit_of_measurement=POWER_KILO_WATT,
+        native_unit_of_measurement=POWER_WATT,
     ),
     SensorEntityDescription(
         key="reactive_energy",
         name="Reactive energy",
         device_class=DEVICE_CLASS_POWER,
-        native_unit_of_measurement=POWER_KILO_WATT,
+        native_unit_of_measurement="var",
     ),
     SensorEntityDescription(
         key="active_energy_import",
         name="Active energy import",
         device_class=DEVICE_CLASS_POWER,
-        native_unit_of_measurement=POWER_KILO_WATT,
+        native_unit_of_measurement=POWER_WATT,
     ),
     SensorEntityDescription(
         key="reactive_energy_import",
         name="Reactive energy import",
         device_class=DEVICE_CLASS_POWER,
-        native_unit_of_measurement=POWER_KILO_WATT,
+        native_unit_of_measurement="var",
     ),
 )
 
@@ -121,7 +120,7 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
     await coordinator.async_config_entry_first_refresh()
     for idx, ent in enumerate(coordinator.data):
         # if isinstance(ent, FoxR1S1Device):
-        entities = [
+        entities += [
             FoxGenericSensor(coordinator, idx, description)
             for description in FOX_SENSORS
         ]
@@ -141,7 +140,9 @@ class FoxGenericSensor(CoordinatorEntity, SensorEntity):
     @property
     def name(self):
         """Return the name of the device."""
-        return f"{self.coordinator.data[self._idx].name}-sensor-{self.entity_description.key}"
+        device = self.coordinator.data[self._idx]
+        name = device.name if not device.name else "r1s1"
+        return f"{name}-{device.mac_addr}-sensor-{self.entity_description.key}"
 
     @property
     def unique_id(self) -> str:
